@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<!-- 
+    Author: Daniel Viner
+    Desc: Page for displaying a line chart using an AJAX call to get data.
+    Notes: AJAX seemed to take alot better to the linechart compared to the use of JSON in the scatter
+           graph for some reason. Not sure as to why? This is why they both use different methods.
+    Sources: https://developers.google.com/chart/interactive/docs/php_example
+			https://www.w3schools.com/js/js_ajax_asp.asp
+             https://www.quirksmode.org/blog/archives/2005/12/the_ajax_respon.html
+             https://stackoverflow.com/questions/17662441/showing-google-chart-dynamically-in-div-using-php-and-ajax
+             https://stackoverflow.com/questions/20484566/populate-google-charts-with-ajax-xml-variable
+-->
+<html>
+    <head>
+        <title>Line Graph</title>
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script type="text/javascript">
+            function run(){
+                //google chart loads.
+                google.charts.load('current', {'packages':['corechart']});
+                google.charts.setOnLoadCallback(drawChart);
+                
+                function drawChart(){
+                    //initialise and get all variables.
+                    var temp = document.getElementById("date").value;
+                    var temp2 = temp.split("-");
+                    var date = temp2[2]+"/"+temp2[1]+"/"+temp2[0];
+                    var getlocation = document.getElementById("location");
+                    var path = getlocation.options[getlocation.selectedIndex].value;
+                    var location = getlocation.options[getlocation.selectedIndex].text;
+                    
+                    //data store
+                    var data = new google.visualization.DataTable();
+                    
+                    //begin ajax call
+                    $.ajax({
+                        url: path,
+                        datatype: 'xml',
+                        success: function(xml){
+                            //define data structure
+                            data.addColumn('timeofday', 'time');
+                            data.addColumn('number', 'no2 levels');
+                            
+                            //get all of the readings.
+                            var readings = xml.getElementsByTagName("reading");
+                            
+                            //loop over retrieved readings and get all that match
+                            // the supplied date.
+                            for(var i=0; i < readings.length; i++){
+                                if(readings[i].getAttribute("date") == date){
+                                    //get time value, format time.
+                                    var time = readings[i].getAttribute("time");
+                                    var timetemp = time.split(":");
+                                    var newtime = [parseInt(timetemp[0]), parseInt(timetemp[1]), parseInt(timetemp[2])];
+                                    //get value of reading
+                                    var val = readings[i].getAttribute("val");
+                                    
+                                    //add the data to the store.
+                                    data.addRow([newtime, parseInt(val)]);
+                                }
+                            }
+                            //sort the data by time value.
+                            data.sort({column:0});
+                            
+                            //define options for the linegraph
+                            var options = {
+                                //general table variables.
+                                title: 'no2 levels',
+                                curveType: 'function',
+                                hAxis: {title:"Time"},
+                                vAxis: {title:"NO2 Quantity"},
+								
+                                
+                                //trendlines definition.
+                                trendlines: {
+                                    0: {
+                                      type: 'exponential',
+                                      color: 'red',
+                                      lineWidth: 3,
+                                      opacity: 0.6,
+                                      showR2: true,
+                                      visibleInLegend: true,
+                                      labelInLegend: 'Trend'
+                                    }
+                                }
+                            };
+                            //define and draw chart.
+                            var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+                            chart.draw(data, options);
+                        }
+                    });
+                }
+            }   
+        </script>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <div id="chart_div"></div> <!--Values are set to first reading for Brislington_NO2.xml -->
+        <input id="date" type="date" name="date" max="2017-02-13" min="2014-11-13" value="2016-03-31"><br>
+        <select id="location">
+            <option value="../xml/no2/brislington_NO2.xml" selected="selected">Brislington</option>
+            <option value="../xml/no2/fishponds_NO2.xml">Fishponds</option>
+            <option value="../xml/no2/newfoundland_way_NO2.xml">NewFoundLand Way</option>
+            <option value="../xml/no2/parson_st_NO2.xml">Parson Street</option>
+            <option value="../xml/no2/rupert_st_NO2.xml">Rupert Street</option>
+            <option value="../xml/no2/wells_rd_NO2.xml">Wells Road</option>
+        </select><br>
+        <input id="load" type="button" value="load data" onclick="run();">
+        <script>
+            run();
+        </script>
+    </body>
+</html>

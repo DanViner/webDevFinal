@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<!-- 
+    Author: Daniel Viner
+	Date : 13/03/2018
+    Desc: Page for displaying a scatter chart of imported JSON data from XML files.
+    
+    Sources: https://developers.google.com/chart/interactive/docs/php_example
+             https://www.w3schools.com/js/js_ajax_asp.asp
+			 https://www.w3schools.com/xml/ajax_xmlhttprequest_send.asp
+             https://stackoverflow.com/questions/17662441/showing-google-chart-dynamically-in-div-using-php-and-ajax
+			 https://developers.google.com/chart/interactive/docs/gallery/trendlines
+-->
+<html>
+    <head>
+        <title>Scatter Chart</title>
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script type="text/javascript">
+        
+		/*Function Run: script called by submitting form data.
+		 * function will load google chart data, build data from the XML file
+		 * and output the results into a scatter chart complete with trendline.
+		 * Parameters: n/a
+		*/
+		function run(){    
+            google.charts.load('current', {'packages':['corechart']});
+            google.charts.setOnLoadCallback(drawChart);
+            function drawChart(){
+                //get time and date from form
+                var time = document.getElementById("time").value;
+                var date = document.getElementById("dates").value;
+                
+                //get location details from form
+                var getlocation = document.getElementById("location");
+                var path = getlocation.options[getlocation.selectedIndex].value;
+                var location = getlocation.options[getlocation.selectedIndex].text;
+                
+                //create data variable, specify json script
+                var data;
+                var json = "../php/DataOverYearJSON.php";
+                
+                //format paramters to send.
+                var p = "location="+path+"&time="+time+":00"+"&date="+date;
+                
+                //begin the XMLHTTP request to the JSON file
+                var xmlhttp = new XMLHttpRequest();
+                xmlhttp.open("POST", json, true);
+                xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                
+				//Code taken from https://www.w3schools.com/xml/ajax_xmlhttprequest_send.asp
+				xmlhttp.onreadystatechange = function(){
+                    if(xmlhttp.readyState==4 && xmlhttp.status==200){
+                        data = xmlhttp.responseText;
+                    }
+                }
+                xmlhttp.send(p);
+                
+                //process acquired data with google function.
+                var data = new google.visualization.DataTable(data);
+                
+                //specify options for table
+                var options = {
+                    //general options
+                    title: "NO2 Over Time In " + location,
+                    pointShape: 'diamond',
+                    //table axis labels.
+                    hAxis: {title:"Time"},
+                    vAxis: {title:"NO2 Quantity"},
+                    
+                    //creates a line to show the trend of the values.
+					//Code taken from google Charts tutorial page on Trendlines.
+					// https://developers.google.com/chart/interactive/docs/gallery/trendlines
+                    trendlines: {
+                        0: {
+                            type: 'polynomial',
+                            color: 'red',
+                            lineWidth: 3,
+                            opacity: 0.3,
+                            showR2: true,
+                            visibleInLegend: true,
+                            labelInLegend: 'Trend'
+                        }
+                    }
+                };
+                //draw the chart
+                var chart = new google.visualization.ScatterChart(document.getElementById("chart_div"));
+                chart.draw(data, options);
+            }
+        }
+        </script>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <!-- Specifies chart area -->
+        <div id="chart_div"></div>
+        
+        <!-- Time input -->
+        <input id="time" type="time" name="time" step="900" value="22:00"><br/>
+        <!-- Drop down for dates -->
+        <select id="dates">
+            <option value="2014">2014</option>
+            <option value="2015">2015</option>
+            <option value="2016" selected = "selected">2016</option>
+            <option value="2017">2017</option>
+        </select><br/>
+        <!-- Drop down with all of the locations, retrievable value is the
+            direct path to the XML file for that area. -->
+        <select name= "location" id="location">
+            <option id="brislington" value="../xml/no2/brislington_NO2.xml" selected="selected">Brislington</option>
+            <option id="fishponds" value="../xml/no2/fishponds_NO2.xml">Fishponds</option>
+            <option id="newfoundland" value="../xml/no2/newfoundland_way_NO2.xml">NewFoundLand Way</option>
+            <option id="parson" value="../xml/no2/parson_st_NO2.xml">Parson Street</option>
+            <option id="rupert" value="../xml/no2/rupert_st_NO2.xml">Rupert Street</option>
+            <option id="wells" value="../xml/no2/wells_rd_NO2.xml">Wells Road</option>
+        </select><br/>
+        
+        <!-- Submit button -->
+        <input id="load" type="button" value="load data" onclick="run();">
+        <script>
+            run();
+        </script>
+    </body>
+</html>
