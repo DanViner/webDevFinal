@@ -5,7 +5,7 @@
     Notes: AJAX seemed to take alot better to the linechart compared to the use of JSON in the scatter
            graph for some reason. Not sure as to why? This is why they both use different methods.
     Sources: https://developers.google.com/chart/interactive/docs/php_example
-			https://www.w3schools.com/js/js_ajax_asp.asp
+	     https://www.w3schools.com/js/js_ajax_asp.asp
              https://www.quirksmode.org/blog/archives/2005/12/the_ajax_respon.html
              https://stackoverflow.com/questions/17662441/showing-google-chart-dynamically-in-div-using-php-and-ajax
              https://stackoverflow.com/questions/20484566/populate-google-charts-with-ajax-xml-variable
@@ -72,7 +72,8 @@
                                 vAxis: {title:"NO2 Quantity"},
 								
                                 
-                                //trendlines definition.
+                                //trendlines code taken from Google charts tutorial on trendlines
+				// https://developers.google.com/chart/interactive/docs/gallery/trendlines
                                 trendlines: {
                                     0: {
                                       type: 'exponential',
