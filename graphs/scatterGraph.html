@@ -6,9 +6,9 @@
     
     Sources: https://developers.google.com/chart/interactive/docs/php_example
              https://www.w3schools.com/js/js_ajax_asp.asp
-			 https://www.w3schools.com/xml/ajax_xmlhttprequest_send.asp
+	     https://www.w3schools.com/xml/ajax_xmlhttprequest_send.asp
              https://stackoverflow.com/questions/17662441/showing-google-chart-dynamically-in-div-using-php-and-ajax
-			 https://developers.google.com/chart/interactive/docs/gallery/trendlines
+             https://developers.google.com/chart/interactive/docs/gallery/trendlines
 -->
 <html>
     <head>
@@ -47,8 +47,8 @@
                 xmlhttp.open("POST", json, true);
                 xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
                 
-				//Code taken from https://www.w3schools.com/xml/ajax_xmlhttprequest_send.asp
-				xmlhttp.onreadystatechange = function(){
+		//Code taken from https://www.w3schools.com/xml/ajax_xmlhttprequest_send.asp
+		xmlhttp.onreadystatechange = function(){
                     if(xmlhttp.readyState==4 && xmlhttp.status==200){
                         data = xmlhttp.responseText;
                     }
@@ -68,8 +68,8 @@
                     vAxis: {title:"NO2 Quantity"},
                     
                     //creates a line to show the trend of the values.
-					//Code taken from google Charts tutorial page on Trendlines.
-					// https://developers.google.com/chart/interactive/docs/gallery/trendlines
+		    //Code taken from google Charts tutorial page on Trendlines.
+		    // https://developers.google.com/chart/interactive/docs/gallery/trendlines
                     trendlines: {
                         0: {
                             type: 'polynomial',
