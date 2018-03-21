@@ -5,13 +5,9 @@
  * 
  * Edited By: Daniel Viner
  * Date Edited: 13/03/2018
- * Edited to use a select statement to create all of the initial
- * XML files sequentially.
- * 
- * 
- * Notes:
- * Could work faster and more efficiently
- * isn't technically divide and conquer method.
+ * Edxtended functionality to create all of the initial XML files sequentially using nested FOR loops.
+ *
+ * Sources: https://stackoverflow.com/questions/16171132/how-to-increase-maximum-execution-time-in-php
  */
  
 /*
@@ -28,19 +24,20 @@
  *      <long val=""/>
  * </row>
  */
-//check the csv is where it should be
-//Edited to kill the script if not present
+//check the csv is where it should be - kill script - output error reason to user.
 if(!file_exists("../air_quality.csv")){
     die("air_quality.csv not present in project.");
 }
-//alot more execution time, script can take awhile depending on the machine
-//alot of time added to enable use of script on UWE computers.
+/* Increased run time for script as UWE systems would not complete all actions.
+ * code taken from https://stackoverflow.com/questions/16171132/how-to-increase-maximum-execution-time-in-php 
+*/
 ini_set('max_execution_time', 300);
+
 echo nl2br("working .. wait \r\n");
 ob_flush();
 flush();
 
-//Array for output file names & corresponding IDs within the CSV file.
+//Array for output file names & their corresponding IDs.
 $outputNames = array("brislington.xml", "fishponds.xml", "parson_st.xml", 
     "rupert_st.xml", "wells_rd.xml", "newfoundland_way.xml");
 $ids = array(3, 6, 8, 9, 10, 11);
@@ -54,7 +51,7 @@ $ids = array(3, 6, 8, 9, 10, 11);
  * 5 = newfoundland_way = 11
  */
  
-//check the files havent already been created.
+//if to check the files havent already been created.
 if(file_exists("../xml/orig/".$outputNames[0])){
     die("Files have already been created.");
 }
