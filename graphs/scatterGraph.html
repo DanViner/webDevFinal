@@ -3,6 +3,7 @@
     Author: Daniel Viner
     Date : 13/03/2018
     Desc: Page for displaying a scatter chart of imported JSON data from XML files.
+	  Takes input from user on this form.
     
     Sources: https://developers.google.com/chart/interactive/docs/php_example
              https://www.w3schools.com/js/js_ajax_asp.asp
@@ -39,21 +40,21 @@
                 var data;
                 var json = "../php/DataOverYearJSON.php";
                 
-                //format paramters to send.
+                //format paramters. (we add ":00" as time values in xml consist of 'HH:MM:SS', for usability, on form we only use 'HH:MM')
                 var p = "location="+path+"&time="+time+":00"+"&date="+date;
                 
                 //begin the XMLHTTP request to the JSON file
-                var xmlhttp = new XMLHttpRequest();
-                xmlhttp.open("POST", json, false);
-                xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                var xhttp = new XMLHttpRequest();
+                xhttp.open("POST", json, false);
+                xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
                 
 		//Code taken from https://www.w3schools.com/xml/ajax_xmlhttprequest_send.asp
-		xmlhttp.onreadystatechange = function(){
-                    if(xmlhttp.readyState==4 && xmlhttp.status==200){
-                        data = xmlhttp.responseText;
+		xhttp.onreadystatechange = function(){
+                    if(xhttp.readyState==4 && xhttp.status==200){
+                        data = xhttp.responseText;
                     }
                 }
-                xmlhttp.send(p);
+                xhttp.send(p);
                 
                 //process acquired data with google function.
                 var data = new google.visualization.DataTable(data);
