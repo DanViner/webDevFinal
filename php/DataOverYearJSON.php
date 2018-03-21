@@ -12,14 +12,14 @@
  *          http://php.net/manual/en/book.simplexml.php
  */
 //Get required parameters.
-$location = $_REQUEST["location"];
+$monitor = $_REQUEST["monitor"];
 $time = $_REQUEST["time"];
 $date = $_REQUEST["date"];
 
 
 //load specified xml, perform Xpath query
-$xml = simplexml_load_file($location);
-$results = $xml->xpath("//reading[@time='$time' and contains(@date, '$date')]");
+$x = simplexml_load_file($monitor);
+$results = $x->xpath("//reading[@time='$time' and contains(@date, '$date')]");
 //create arrays for data to be stored.
 $rows = array();
 $table = array();
@@ -28,12 +28,12 @@ $table["cols"] = array(array("label" => "date/time", "type" => "date"),
 //define date format.
 $dFormat = "d/m/Y H:i:s";
 //loops for every result recieved.
-foreach($results as $single){
+foreach($results as $singleReading){
     //read in the values, define date against format.
-    $read = simplexml_load_string($single->asXML());
-    $date = DateTime::createFromFormat($dFormat, ($read->attributes()->date 
-            . " " . $read->attributes()->time));
-    $val = $read->attributes()->val;
+    $reading = simplexml_load_string($singleReading->asXML());
+    $date = DateTime::createFromFormat($dFormat, ($reading->attributes()->date 
+            . " " . $reading->attributes()->time));
+    $val = $reading->attributes()->val;
     
     //format date / time.
     $temp = array();
@@ -43,15 +43,13 @@ foreach($results as $single){
                           . date("H", $date->format("U")) . ", " 
                           . date("i", $date->format("U")) . ", " 
                           . date("s", $date->format("U")) . ")";
-    
-    //move data.
     $temp[] = array("v" => $chartJSONDate);
     $temp[] = array("v" => abs($val));
     $rows[] = array("c" => $temp);
 }
 //finalise data.
 $table["rows"] = $rows;
-$tJSON = json_encode($table);
+$tableJSON = json_encode($table);
 //return data
-echo $tJSON;
+echo $tableJSON;
 ?>
