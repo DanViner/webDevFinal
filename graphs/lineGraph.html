@@ -16,7 +16,7 @@
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
         <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
         <script type="text/javascript">
-            function run(){
+            function draw(){
                 //google chart loads.
                 google.charts.load('current', {'packages':['corechart']});
                 google.charts.setOnLoadCallback(drawChart);
@@ -66,7 +66,7 @@
                             //define options for the linegraph
                             var options = {
                                 //general table variables.
-                                title: 'no2 levels',
+                                title: 'NO2 Levels',
                                 curveType: 'function',
                                 hAxis: {title:"Time"},
                                 vAxis: {title:"NO2 Quantity"},
@@ -79,7 +79,7 @@
                                       type: 'exponential',
                                       color: 'red',
                                       lineWidth: 3,
-                                      opacity: 0.6,
+                                      opacity: 0.8,
                                       showR2: true,
                                       visibleInLegend: true,
                                       labelInLegend: 'Trend'
@@ -98,7 +98,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
-        <div id="chart_div"></div> <!--Values are set to first reading for Brislington_NO2.xml -->
+        <div id="chart_div"></div> <!--Values are set to first reading for Brislington_NO2.xml. min/max values taken from all xmls. -->
         <input id="date" type="date" name="date" max="2017-02-13" min="2014-11-13" value="2016-03-31"><br>
         <select id="location">
             <option value="../xml/no2/brislington_NO2.xml" selected="selected">Brislington</option>
@@ -108,9 +108,9 @@
             <option value="../xml/no2/rupert_st_NO2.xml">Rupert Street</option>
             <option value="../xml/no2/wells_rd_NO2.xml">Wells Road</option>
         </select><br>
-        <input id="load" type="button" value="load data" onclick="run();">
+        <input id="load" type="button" value="load data" onclick="draw();">
         <script>
-            run();
+            draw();
         </script>
     </body>
 </html>
